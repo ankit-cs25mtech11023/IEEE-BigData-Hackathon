@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+toolkit/
+outputs/
+*.zip
+!data/task1/development/sample_b0_submission.zip
