@@ -10,7 +10,7 @@ Python solvers for seen templates, LLM program-of-thought + self-consistency for
 **Deadlines:** Test ZIP 15 Oct 2026 23:59 AoE (aim 14 Oct). Paper 23 Oct 2026 23:59 AoE.
 
 ## Current Phase
-Phases 0–1 done. Phase 2–4 code written and mock-tested (tests/test_llm_paths.py); waiting on the college LLM endpoint
+Phases 0–1 done. Phase 2–4 code written and mock-tested (tests/test_llm_paths.py); waiting on network access to the college LLM endpoint (qwen-122b, port 8002 unreachable off-campus)
 to run: connectivity check → model shoot-out → solver generation → hidden-path eval → submissions.
 
 ## Recent Decisions

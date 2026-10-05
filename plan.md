@@ -159,13 +159,16 @@ Dev/
 - 2026-10-05: Seen solvers are verified on train instances only by default, so dev stays a held-out check of solver generalisation; `--include-dev` for the final regeneration of failures.
 - 2026-10-05: Hidden-path proxy = dev intermediate/advanced cases, hidden path only, retrieval excludes the case's own template family (`fp.<domain>.<topic>.<family>`).
 - 2026-10-05: Hidden path uses adaptive self-consistency (3 samples, up to 7 on disagreement); float-tainted programs get half a vote.
-- 2026-10-05: Git local only until user confirms remote; commits under user's identity, no AI attribution.
+- 2026-10-05: Commits and pushes under user's identity only, no AI attribution. Remote: `origin` =
+  `git@github.com:ankit-cs25mtech11023/IEEE-hackathon-finreason.git`; push only when user asks.
+- 2026-10-05: LLM = `qwen-122b` on college endpoint (config in gitignored `.env`). Endpoint is plain HTTP.
+- 2026-10-05: Team = single member, Ankit Kr Sinha. Contact email for Test uploads: ankitsinha1504@gmail.com.
 
 ## Open Items (need user)
-- LLM API: base URL, key, model names, network access (campus/VPN), rate limits.
-- Team Name (must stay constant) and Contact Email for Test uploads.
-- Team members / affiliations for the paper.
-- Whether to push to a private GitHub remote.
+- LLM endpoint port 8002 times out from the dev laptop's home network (host answers on port 80; outbound
+  port 8002 works to other hosts) → likely campus-only / IP allowlist. Need campus network, VPN, or allowlisting.
+- Team Name (must stay constant) for Test uploads.
+- Affiliation for the paper.
 
 ## Notes
 - Required citations in paper: Cup overview, Task 1 overview, FinChain (ACL 2026). BibTeX on site `#paper-references`.
