@@ -10,7 +10,8 @@ Python solvers for seen templates, LLM program-of-thought + self-consistency for
 **Deadlines:** Test ZIP 15 Oct 2026 23:59 AoE (aim 14 Oct). Paper 23 Oct 2026 23:59 AoE.
 
 ## Current Phase
-Phase 0/1 — setup done except git/venv; building core non-LLM infrastructure while waiting for the LLM API details.
+Phases 0–1 done. Phase 2–4 code written and mock-tested (tests/test_llm_paths.py); waiting on the college LLM endpoint
+to run: connectivity check → model shoot-out → solver generation → hidden-path eval → submissions.
 
 ## Recent Decisions
 - Hidden-template half is 50% of final score and dev leaderboard is seen-only → leave-template-out proxy eval is essential.
@@ -18,6 +19,12 @@ Phase 0/1 — setup done except git/venv; building core non-LLM infrastructure w
 - Use official toolkit (`toolkit/`, pinned) for validate / package / score-dev; never modify it.
 
 ## Key Commands
+- Venv: `.venv/bin/python`; tests: `.venv/bin/python -m pytest -q tests`
+- LLM check: `.venv/bin/python scripts/llm_check.py` (needs `.env`, see `.env.example`)
+- Seen solvers: `.venv/bin/python scripts/gen_solvers.py [--limit N] [--include-dev]`
+- Hidden proxy eval: `.venv/bin/python scripts/eval_hidden.py --n 60 --name run1`
+- Predict: `.venv/bin/python scripts/predict.py {dev,leaderboard,test} [--hidden] --name NAME` → `outputs/<split>/<name>/`
+- Package: `.venv/bin/python scripts/package.py {leaderboard,test} outputs/<split>/<name>/predictions.jsonl`
 - Official dev scoring: `python3 toolkit/scripts/task1_cli.py score-dev --questions data/task1/development/dev_questions.jsonl --gold data/task1/development/dev_gold.jsonl --manifest data/task1/development/dev_manifest.jsonl --predictions <preds.jsonl>`
 - Validate / package: see `toolkit/scripts/task1_cli.py {validate,package,validate-zip}`.
 

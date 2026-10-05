@@ -120,7 +120,8 @@ Dev/
 ### Phase 2: LLM client
 - [ ] OpenAI-compatible client reading `.env`; disk cache keyed by (model, messages, params)
 - [ ] Concurrency + retries + rate limiting
-- [ ] Connectivity check script; list hosted models
+- [ ] Connectivity check script; list hosted models (`scripts/llm_check.py`)
+- [ ] Run connectivity check against the college endpoint
 - [ ] Quick model shoot-out on a fixed dev subset; pick default model
 
 ### Phase 3: Seen path — verified template solvers
@@ -155,6 +156,9 @@ Dev/
 - 2026-10-05: LLM = college-hosted open model via OpenAI-compatible API (no local GPU on dev laptop). Prefer largest instruct/coder model (≥32B; 70B+ ideal). Model chosen empirically on dev.
 - 2026-10-05: Seen path uses verified per-template solvers; hidden path uses PoT + self-consistency. Hidden half = 50% of final score, so most effort goes there after seen path is solid.
 - 2026-10-05: Use system Python 3.14 in a venv (official scorer verified on 3.14); avoid extra tooling.
+- 2026-10-05: Seen solvers are verified on train instances only by default, so dev stays a held-out check of solver generalisation; `--include-dev` for the final regeneration of failures.
+- 2026-10-05: Hidden-path proxy = dev intermediate/advanced cases, hidden path only, retrieval excludes the case's own template family (`fp.<domain>.<topic>.<family>`).
+- 2026-10-05: Hidden path uses adaptive self-consistency (3 samples, up to 7 on disagreement); float-tainted programs get half a vote.
 - 2026-10-05: Git local only until user confirms remote; commits under user's identity, no AI attribution.
 
 ## Open Items (need user)

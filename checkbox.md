@@ -19,24 +19,25 @@
 - [x] Unit tests for numbers, formatting, routing, sandbox
 
 ## Phase 2: LLM client
-- [ ] OpenAI-compatible client reading `.env`; disk cache keyed by (model, messages, params)
-- [ ] Concurrency + retries + rate limiting
-- [ ] Connectivity check script; list hosted models
+- [x] OpenAI-compatible client reading `.env`; disk cache keyed by (model, messages, params)
+- [x] Concurrency + retries + rate limiting
+- [x] Connectivity check script; list hosted models (`scripts/llm_check.py`)
+- [ ] Run connectivity check against the college endpoint
 - [ ] Quick model shoot-out on a fixed dev subset; pick default model
 
 ## Phase 3: Seen path — verified template solvers
-- [ ] Solver contract + prompt (template examples + gold → `solve(text)` code)
-- [ ] Generation loop with verify-against-all-instances and error-feedback retries
+- [x] Solver contract + prompt (template examples + gold → `solve(text)` code)
+- [x] Generation loop with verify-against-all-instances and error-feedback retries
 - [ ] Registry of verified solvers; coverage report (templates solved / 290)
 - [ ] Manual fixes for remaining failing templates
 - [ ] Local dev seen score ≥ 0.99 FAC
 - [ ] First leaderboard upload
 
 ## Phase 4: Hidden path — PoT + self-consistency
-- [ ] Leave-template-out evaluation harness (hidden-path proxy)
-- [ ] PoT prompt with answer_spec + slot descriptions + retrieved examples
-- [ ] Retrieval of similar train examples (topic/description/lexical similarity)
-- [ ] Sampling N programs + majority vote on final, slot vote among agreeing programs
+- [x] Leave-template-out evaluation harness (hidden-path proxy)
+- [x] PoT prompt with answer_spec + slot descriptions + retrieved examples
+- [x] Retrieval of similar train examples (topic/description/lexical similarity)
+- [x] Sampling N programs + majority vote on final, slot vote among agreeing programs
 - [ ] Error analysis loop; prompt iteration on proxy set
 - [ ] Optional: verifier/critic pass for low-agreement cases
 

@@ -12,6 +12,7 @@ labelled instance of its template; `index.json` records that verification.
 from __future__ import annotations
 
 import json
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -98,6 +99,7 @@ def verify(code: str, cases: list[Case]) -> tuple[Verification, list[tuple[Case,
 class SolverRegistry:
     def __init__(self, directory: Path = SOLVER_DIR):
         self.directory = directory
+        self._lock = threading.Lock()
         self.index: dict[str, Any] = json.loads(INDEX_PATH.read_text()) if INDEX_PATH.exists() else {}
 
     def has(self, template_id: str) -> bool:
@@ -107,10 +109,11 @@ class SolverRegistry:
         return (self.directory / f"{template_id}.py").read_text()
 
     def save(self, template_id: str, code: str, verification: Verification, meta: dict[str, Any]) -> None:
-        self.directory.mkdir(parents=True, exist_ok=True)
-        (self.directory / f"{template_id}.py").write_text(code)
-        self.index[template_id] = {**verification.as_dict(), **meta}
-        INDEX_PATH.write_text(json.dumps(self.index, indent=1, sort_keys=True))
+        with self._lock:
+            self.directory.mkdir(parents=True, exist_ok=True)
+            (self.directory / f"{template_id}.py").write_text(code)
+            self.index[template_id] = {**verification.as_dict(), **meta}
+            INDEX_PATH.write_text(json.dumps(self.index, indent=1, sort_keys=True))
 
     def solve(self, template_id: str, cases: list[Case]) -> list[Prediction]:
         results = run_program(with_preamble(self.code(template_id)), [(case.body,) for case in cases])
