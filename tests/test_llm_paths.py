@@ -74,3 +74,29 @@ def test_hidden_path_votes_for_majority():
     (result,) = score_cases([case], predictions)
     assert result.final_ok
     assert solver.log[case.case_id]["samples"] == 7  # disagreement triggered extra samples
+
+
+def test_thinking_toggle_sends_flag_budget_and_splits_cache(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    import finreason.llm.client as client_module
+    from finreason.llm.client import LLMClient, Request
+
+    monkeypatch.setattr(client_module, "CACHE_DIR", tmp_path)
+    sent = []
+
+    def create(**kwargs):
+        sent.append(kwargs)
+        thinking = kwargs["extra_body"]["chat_template_kwargs"]["enable_thinking"]
+        content, reason = ("long thoughts with ```python\nx=1\n```", "length") if thinking else ("```python\nx=2\n```", "stop")
+        message = SimpleNamespace(content=content)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message, finish_reason=reason)], usage=None)
+
+    client = LLMClient("http://x/v1", "k", "m", thinking=False, think_budget=100)
+    client._client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    messages = [{"role": "user", "content": "q"}]
+    assert client.chat(Request(messages, max_tokens=50)) == "```python\nx=2\n```"
+    assert client.chat(Request(messages, max_tokens=50, thinking=True)) == ""  # truncated reasoning -> no answer
+    assert [s["max_tokens"] for s in sent] == [50, 150]
+    assert client.chat(Request(messages, max_tokens=50, thinking=False)) == "```python\nx=2\n```"
+    assert len(sent) == 2  # explicit False hits the same cache entry as the client default

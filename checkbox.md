@@ -22,8 +22,9 @@
 - [x] OpenAI-compatible client reading `.env`; disk cache keyed by (model, messages, params)
 - [x] Concurrency + retries + rate limiting
 - [x] Connectivity check script; list hosted models (`scripts/llm_check.py`)
-- [ ] Run connectivity check against the college endpoint
-- [ ] Quick model shoot-out on a fixed dev subset; pick default model
+- [x] Run connectivity check against the college endpoint
+- [x] Thinking toggle: `LLM_THINKING` env + per-request override, part of cache key
+- [ ] Thinking on/off shoot-out on hidden-path proxy (~30 cases each); pick hidden-path default
 
 ## Phase 3: Seen path — verified template solvers
 - [x] Solver contract + prompt (template examples + gold → `solve(text)` code)

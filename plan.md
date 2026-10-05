@@ -122,7 +122,8 @@ Dev/
 - [ ] Concurrency + retries + rate limiting
 - [ ] Connectivity check script; list hosted models (`scripts/llm_check.py`)
 - [ ] Run connectivity check against the college endpoint
-- [ ] Quick model shoot-out on a fixed dev subset; pick default model
+- [ ] Thinking toggle: `LLM_THINKING` env + per-request override (`chat_template_kwargs.enable_thinking`), part of cache key
+- [ ] Thinking on/off shoot-out on hidden-path proxy (~30 cases each); pick hidden-path default
 
 ### Phase 3: Seen path — verified template solvers
 - [ ] Solver contract + prompt (template examples + gold → `solve(text)` code)
@@ -162,11 +163,23 @@ Dev/
 - 2026-10-05: Commits and pushes under user's identity only, no AI attribution. Remote: `origin` =
   `git@github.com:ankit-cs25mtech11023/IEEE-hackathon-finreason.git`; push only when user asks.
 - 2026-10-05: LLM = `qwen-122b` on college endpoint (config in gitignored `.env`). Endpoint is plain HTTP.
+- 2026-10-05: Endpoint reachable off-campus (provider advised NOT using the college network). Only model: `qwen-122b`.
+- 2026-10-05: qwen-122b thinks by default (reasoning inline in `content`, ends with `</think>`; no `reasoning_content`).
+  Measured: thinking on 32.5s / 307 tok vs off 1.4s / 27 tok for the same trivial prompt, same answer.
+  ⇒ thinking is a client setting (`LLM_THINKING`, default off; per-request override; in cache key).
+  Seen-solver generation always runs with thinking off (exact verification + retries beats slow reasoning).
+  Model shoot-out replaced by thinking on/off shoot-out on the hidden-path proxy.
+- 2026-10-05: `LLM_CONCURRENCY` 4 → 8 (8 parallel no-think requests: 4.2s wall, ~170 tok/s aggregate).
+  Shared server: occasional single-request stalls (~127s seen); 300s timeout + 4 retries covers this.
+- 2026-10-05: First live runs. Seen path: `gen_solvers.py --limit 4 --parallel 4` verified 3/4 in 2m40s
+  (~34k prompt + 18k completion tokens). The failure was trivial (cash − payables): with thinking off the model
+  re-implemented `numbers()` with its own regex and wrote its reasoning as code comments (~4.5k tokens, 0/10).
+  Solver prompt now says `numbers()` is injected into globals and must not be redefined, and to keep comments short →
+  same template verified in round 1 with 136 tokens. Hidden path smoke (`eval_hidden.py --n 4`, thinking off):
+  4/4 final correct, unanimous, ~775 completion tokens per call, 65s.
 - 2026-10-05: Team = single member, Ankit Kr Sinha. Contact email for Test uploads: ankitsinha1504@gmail.com.
 
 ## Open Items (need user)
-- LLM endpoint port 8002 times out from the dev laptop's home network (host answers on port 80; outbound
-  port 8002 works to other hosts) → likely campus-only / IP allowlist. Need campus network, VPN, or allowlisting.
 - Team Name (must stay constant) for Test uploads.
 - Affiliation for the paper.
 

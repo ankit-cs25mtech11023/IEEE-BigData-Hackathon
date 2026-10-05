@@ -1,6 +1,9 @@
 """OpenAI-compatible chat client for the college-hosted model server.
 
-- Config from environment / .env: LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, LLM_CONCURRENCY.
+- Config from environment / .env: LLM_BASE_URL, LLM_API_KEY, LLM_MODEL, LLM_CONCURRENCY,
+  LLM_THINKING (0/1, default 0) and LLM_THINK_BUDGET (extra max_tokens when thinking, default 8192).
+- Thinking is toggled per request via `chat_template_kwargs.enable_thinking` (Qwen chat template);
+  `Request.thinking=None` uses the client default. The effective setting is part of the cache key.
 - Every response is cached on disk (outputs/cache/llm), keyed by model + messages + params +
   sample index, so reruns are free and a crashed batch resumes where it stopped.
 - `chat_many` runs requests in parallel with retries and exponential backoff.
@@ -31,6 +34,7 @@ class Request:
     temperature: float = 0.0
     max_tokens: int = 2048
     sample: int = 0  # distinguishes repeated samples of the same prompt in the cache
+    thinking: bool | None = None  # None = client default (LLM_THINKING)
     extra: dict[str, Any] = field(default_factory=dict)
 
 
@@ -43,11 +47,14 @@ def strip_reasoning(text: str) -> str:
 
 
 class LLMClient:
-    def __init__(self, base_url: str, api_key: str, model: str, concurrency: int = 4, timeout: float = 300):
+    def __init__(self, base_url: str, api_key: str, model: str, concurrency: int = 4, timeout: float = 300,
+                 thinking: bool = False, think_budget: int = 8192):
         from openai import OpenAI
 
         self.model = model
         self.concurrency = max(1, concurrency)
+        self.thinking = thinking
+        self.think_budget = think_budget
         self._client = OpenAI(base_url=base_url, api_key=api_key or "none", timeout=timeout, max_retries=0)
         self._lock = threading.Lock()
         self._slots = threading.BoundedSemaphore(self.concurrency)  # caps in-flight requests globally
@@ -70,14 +77,20 @@ class LLMClient:
             api_key=os.environ.get("LLM_API_KEY", ""),
             model=model or os.environ.get("LLM_MODEL", ""),
             concurrency=int(os.environ.get("LLM_CONCURRENCY", "4")),
+            thinking=os.environ.get("LLM_THINKING", "0").strip().lower() in {"1", "true", "yes", "on"},
+            think_budget=int(os.environ.get("LLM_THINK_BUDGET", "8192")),
         )
 
     def list_models(self) -> list[str]:
         return [model.id for model in self._client.models.list().data]
 
+    def _thinking(self, request: Request) -> bool:
+        return self.thinking if request.thinking is None else request.thinking
+
     def _cache_path(self, request: Request) -> Path:
         key = json.dumps(
-            [self.model, request.messages, request.temperature, request.max_tokens, request.sample, request.extra],
+            [self.model, request.messages, request.temperature, request.max_tokens, request.sample, request.extra,
+             self._thinking(request)],
             sort_keys=True,
         )
         digest = hashlib.sha256(key.encode()).hexdigest()
@@ -89,6 +102,8 @@ class LLMClient:
             with self._lock:
                 self.stats["cache_hits"] += 1
             return json.loads(path.read_text())["content"]
+        thinking = self._thinking(request)
+        max_tokens = request.max_tokens + (self.think_budget if thinking else 0)
         delay = 2.0
         for attempt in range(retries + 1):
             try:
@@ -97,11 +112,16 @@ class LLMClient:
                         model=self.model,
                         messages=request.messages,
                         temperature=request.temperature,
-                        max_tokens=request.max_tokens,
+                        max_tokens=max_tokens,
                         **({"seed": request.sample} if self._send_seed and request.temperature > 0 else {}),
                         **request.extra,
+                        extra_body={"chat_template_kwargs": {"enable_thinking": thinking}},
                     )
-                content = strip_reasoning(response.choices[0].message.content or "")
+                choice = response.choices[0]
+                raw = choice.message.content or ""
+                if thinking and choice.finish_reason == "length" and "</think>" not in raw:
+                    raw = ""  # ran out of tokens mid-reasoning: no answer, don't mine code from the thoughts
+                content = strip_reasoning(raw)
                 with self._lock:
                     self.stats["calls"] += 1
                     if response.usage:

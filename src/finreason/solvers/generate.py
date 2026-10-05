@@ -26,6 +26,8 @@ Contract:
 - `text` is the question body. A helper `numbers(text) -> list[Fraction]` is already defined: it returns
   every standalone number in order of appearance as an exact Fraction (handles 1,200 / -3.5 / 1975/28;
   skips numbers glued to words like CO2e, d1, Year-1).
+  It is injected into your module's globals before your code runs: call it directly. Do NOT import,
+  redefine, stub, or re-implement it, and do not write your own number-extraction regex.
 - Use fractions.Fraction for ALL arithmetic. Never use float, round(), or Decimal rounding: the caller
   applies the required rounding. Return exact Fractions/ints for numbers, and Python bool or the exact
   allowed string for enum answers.
@@ -35,6 +37,7 @@ Contract:
 - The wording varies between instances. If the number positions are not identical across all phrasings,
   locate each number by nearby keywords with `re` instead of relying on position.
 - Allowed imports: fractions, math, re, decimal, itertools, functools, statistics, collections.
+- Keep comments to a few short lines; do not write your reasoning into the code.
 - Reply with one ```python code block containing the full solver and nothing else."""
 
 
@@ -122,7 +125,7 @@ def generate_solver(
     for round_index in range(rounds):
         requests = [
             Request(messages, temperature=0.0 if (round_index == 0 and k == 0) else 0.6,
-                    max_tokens=2048, sample=round_index * 10 + k)
+                    max_tokens=2048, sample=round_index * 10 + k, thinking=False)
             for k in range(samples_per_round)
         ]
         for reply in client.chat_many(requests):
