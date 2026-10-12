@@ -1,10 +1,22 @@
-# Handoff — FinReason Cup 2026 Task 1 (updated 2026-10-05, session 2)
+# Handoff — FinReason Cup 2026 Task 1 (updated 2026-10-12, laptop switch)
 
 Start a new session in `/home/ankit-kali/D/Projects/Capstone/Dev` and read, in order:
 1. `claude.md` — context, protocols, key commands (follow its protocols: plan-first, checkbox discipline, git rules)
 2. `plan.md` — full plan, data/scoring facts, Key Decisions (all measurements are logged there), open items
 3. `checkbox.md` — what is done / pending
 4. This file — session state and immediate next steps
+
+## New-laptop setup (do first)
+1. `git clone git@github.com:ankit-cs25mtech11023/IEEE-BigData-Hackathon.git Dev && cd Dev` (set git user.name `ankit-cs25mtech11023`, user.email `cs25mtech11023@iith.ac.in`).
+2. `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`
+3. Copy `.env` from the old laptop by hand (never commit it); template in `.env.example`.
+4. `bash scripts/setup_toolkit.sh` (clones official toolkit at the pinned commit).
+5. `.venv/bin/python -m pytest -q tests` (expect 9 pass), then `.venv/bin/python scripts/llm_check.py`
+   (endpoint reachable only from the home network; NOT the college network).
+
+## Time check
+Today is 2026-10-12. Test ZIP due 15 Oct (internal first-upload target 9 Oct has passed, none recorded). Prioritise:
+full seen-solver run, then a first Test upload ASAP; shoot-out is optional if time is short.
 
 ## Goal
 Compete in FinReason Cup 2026 Task 1 (Verifiable Financial Chain Reasoning), IEEE Big Data Cup.
@@ -13,13 +25,15 @@ Site: https://the-finai.github.io/IEEE-bigdata-cup/task1/
 - **Working Notes paper due 23 Oct 2026 23:59 AoE** (CyberChair SC03, ≤10 pages IEEE 2-col).
 
 ## State
-- Git: `main`, remote `origin` = `git@github.com:ankit-cs25mtech11023/IEEE-hackathon-finreason.git`.
-  Nothing pushed yet (push only when the user asks). Commit identity: `ankit-cs25mtech11023`. No AI attribution.
+- Git: `main`, remote `origin` = `git@github.com:ankit-cs25mtech11023/IEEE-BigData-Hackathon.git`.
+  **Pushed 2026-10-12** (everything committed). Commit identity: `ankit-cs25mtech11023`. No AI attribution.
+- `outputs/` (incl. LLM cache, partial shoot-out replies, abstain ZIPs) and this file are now force-tracked in git.
+  `.env` and `toolkit/` are NOT in git.
 - `.env` exists (gitignored): `qwen-122b`, `LLM_CONCURRENCY=8`, `LLM_THINKING=0`. **Never print or echo the key.**
 - **Endpoint works from the user's home network.** Provider said NOT to use the college network. Plain HTTP.
 - Phases 0–1 done; Phase 2–4 code runs live. 9/9 tests pass (`.venv/bin/python -m pytest -q tests`).
 - Seen solvers: **4 / 290 verified** (`solvers/generated/`, committed).
-- Abstain baseline ZIPs still valid (`outputs/{leaderboard,test}/abstain/submission.zip`, gitignored).
+- Abstain baseline ZIPs still valid (`outputs/{leaderboard,test}/abstain/submission.zip`, now tracked).
 - `toolkit/` = official repo pinned at `fa6d96db…` (gitignored; `scripts/setup_toolkit.sh`). Never modify it.
 
 ## This session (all recorded in plan.md Key Decisions)
@@ -75,8 +89,7 @@ Site: https://the-finai.github.io/IEEE-bigdata-cup/task1/
 
 ## User preferences
 - Explain details before implementing and wait for an explicit go-ahead. Claude leads implementation.
-- Commits under the user's identity with **no Claude/AI attribution** (global CLAUDE.md). Stage files explicitly
-  (`HANDOFF.md` is deliberately untracked unless the user asks).
+- Commits under the user's identity with **no Claude/AI attribution** (global CLAUDE.md). Stage files explicitly.
 - Caveman (terse) response mode active.
 
 ## Suggested skills
