@@ -1,0 +1,2 @@
+leave-template-out eval on 30 dev cases with model qwen-122b
+  hidden path 10/30  llm={'calls': 22, 'cache_hits': 12, 'errors': 2, 'prompt_tokens': 27098, 'completion_tokens': 24375}

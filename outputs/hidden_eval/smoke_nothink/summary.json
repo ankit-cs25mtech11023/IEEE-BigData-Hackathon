@@ -1,0 +1,50 @@
+{
+ "overall": {
+  "n": 4,
+  "final": 1.0,
+  "steps": 1.0
+ },
+ "template_macro_final": 1.0,
+ "by_difficulty": {
+  "advanced": {
+   "n": 1,
+   "final": 1.0,
+   "steps": 1.0
+  },
+  "intermediate": {
+   "n": 3,
+   "final": 1.0,
+   "steps": 1.0
+  }
+ },
+ "by_source": {
+  "hidden": {
+   "n": 4,
+   "final": 1.0,
+   "steps": 1.0
+  }
+ },
+ "failed_templates": [],
+ "by_agreement": {
+  "unanimous": {
+   "n": 4,
+   "final": 1.0
+  }
+ },
+ "llm_stats": {
+  "calls": 12,
+  "cache_hits": 0,
+  "errors": 0,
+  "prompt_tokens": 15558,
+  "completion_tokens": 9310
+ },
+ "config": {
+  "n": 4,
+  "name": "smoke_nothink",
+  "model": null,
+  "k": 3,
+  "first_samples": 3,
+  "max_samples": 7,
+  "seed": 0
+ }
+}

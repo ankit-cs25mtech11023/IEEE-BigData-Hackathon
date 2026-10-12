@@ -1,0 +1,1 @@
+{"content": "```python\nfrom fractions import Fraction\n\ndef solve():\n    return Fraction(7, 3", "model": "qwen-122b"}

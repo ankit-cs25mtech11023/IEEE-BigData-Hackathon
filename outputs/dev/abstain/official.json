@@ -1,0 +1,26 @@
+{
+ "counts": {
+  "cases": 290,
+  "checkpoint_cases": 258,
+  "checkpoint_templates": 258,
+  "matched_final_answers": 0,
+  "matched_slots": 0,
+  "total_slots": 518
+ },
+ "dataset_version": "task1-v4",
+ "diagnostics": {
+  "micro_checkpoint": "0",
+  "micro_fac": "0"
+ },
+ "ranking_tuple": null,
+ "schema_version": "finreason.task1.report/2.0.0",
+ "scorer_version": "finreason.task1.scorer/2.0.0",
+ "scores": {
+  "combined_checkpoint": null,
+  "combined_fac": null,
+  "hidden_checkpoint": null,
+  "hidden_fac": null,
+  "seen_checkpoint": "0",
+  "seen_fac": "0"
+ }
+}

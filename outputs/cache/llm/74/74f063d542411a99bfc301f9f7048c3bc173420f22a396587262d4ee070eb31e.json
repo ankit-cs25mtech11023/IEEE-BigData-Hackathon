@@ -1,0 +1,1 @@
+{"content": "```python\nfrom fractions import Fraction\nimport re\n\ndef solve(text: str) -> dict:\n    nums = numbers(text)\n    cash = nums[0]\n    payables = nums[1]\n    result = cash - payables\n    return {\"final\": result, \"steps\": {}}\n```", "model": "qwen-122b"}
